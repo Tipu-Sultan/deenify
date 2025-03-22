@@ -45,7 +45,7 @@ const usePrayer = () => {
 
       try {
         const geoResponse = await axios.get(
-          "https://api.bigdatacloud.net/data/reverse-geocode-client",
+          process.env.NEXT_PUBLIC_BIGDATA_CLOUD_API,
           {
             params: {
               latitude: location.latitude,
@@ -77,7 +77,7 @@ const usePrayer = () => {
       setLoading(true);
       setError(null);
       const nominatimResponse = await axios.get(
-        "https://nominatim.openstreetmap.org/search",
+        process.env.NEXT_PUBLIC_NOMINATIM_API,
         {
           params: {
             q: searchCity,
@@ -113,7 +113,7 @@ const usePrayer = () => {
         setLoading(true);
         setError(null);
         const response = await axios.get(
-          `https://api.aladhan.com/v1/timings/${Math.floor(Date.now() / 1000)}`,
+          `${process.env.NEXT_PUBLIC_ALADHAN_API}/${Math.floor(Date.now() / 1000)}`,
           {
             params: {
               latitude: location.latitude,

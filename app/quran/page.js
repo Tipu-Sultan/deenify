@@ -31,7 +31,7 @@ export default function QuranPage() {
   useEffect(() => {
     const fetchMetadata = async () => {
       try {
-        const response = await axios.get('https://api.alquran.cloud/v1/surah');
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_QURAN_API}/surah`);
         setSurahsList(response.data.data);
         setLoading(false);
       } catch (err) {
@@ -50,9 +50,9 @@ export default function QuranPage() {
         setLoading(true);
         setJuzData(null);
         const [arabicResponse, urduResponse, englishResponse] = await Promise.all([
-          axios.get(`https://api.alquran.cloud/v1/surah/${currentSurah}/ar.uthmani`),
-          axios.get(`https://api.alquran.cloud/v1/surah/${currentSurah}/ur.jalandhry`),
-          axios.get(`https://api.alquran.cloud/v1/surah/${currentSurah}/${englishTranslator}`),
+          axios.get(`${process.env.NEXT_PUBLIC_QURAN_API}/surah/${currentSurah}/ar.uthmani`),
+          axios.get(`${process.env.NEXT_PUBLIC_QURAN_API}/surah/${currentSurah}/ur.jalandhry`),
+          axios.get(`${process.env.NEXT_PUBLIC_QURAN_API}/surah/${currentSurah}/${englishTranslator}`),
         ]);
 
         const verses = arabicResponse.data.data.ayahs.map((ayah, index) => {
@@ -65,7 +65,7 @@ export default function QuranPage() {
             hinglish: toHinglish(urduText),
             english: englishResponse.data.data.ayahs[index]?.text || 'English not available',
             numberInSurah: ayah.numberInSurah,
-            audioUrl: `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayah.number}.mp3`,
+            audioUrl: `${process.env.NEXT_PUBLIC_QURAN_AUDIO_API}/${ayah.number}.mp3`,
           };
         });
 
@@ -94,9 +94,9 @@ export default function QuranPage() {
         setLoading(true);
         setSurahData(null);
         const [arabicResponse, urduResponse, englishResponse] = await Promise.all([
-          axios.get(`https://api.alquran.cloud/v1/juz/${currentJuz}/ar.uthmani`),
-          axios.get(`https://api.alquran.cloud/v1/juz/${currentJuz}/ur.jalandhry`),
-          axios.get(`https://api.alquran.cloud/v1/juz/${currentJuz}/${englishTranslator}`),
+          axios.get(`${process.env.NEXT_PUBLIC_QURAN_API}/juz/${currentJuz}/ar.uthmani`),
+          axios.get(`${process.env.NEXT_PUBLIC_QURAN_API}/juz/${currentJuz}/ur.jalandhry`),
+          axios.get(`${process.env.NEXT_PUBLIC_QURAN_API}/juz/${currentJuz}/${englishTranslator}`),
         ]);
 
         const verses = arabicResponse.data.data.ayahs.map((ayah, index) => {
@@ -110,7 +110,7 @@ export default function QuranPage() {
             english: englishResponse.data.data.ayahs[index]?.text || 'English not available',
             numberInSurah: ayah.numberInSurah,
             surahId: ayah.surah.number,
-            audioUrl: `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayah.number}.mp3`,
+            audioUrl: `${process.env.NEXT_PUBLIC_QURAN_AUDIO_API}/${ayah.number}.mp3`,
           };
         });
 
