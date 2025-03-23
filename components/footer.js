@@ -1,8 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation"; // Optional: for active link highlighting
 
 export default function Footer() {
+  const pathname = usePathname(); // Optional: for active link highlighting
+
   const navigation = [
     { name: "Home", href: "/" },
     { name: "Quran", href: "/quran" },
@@ -11,16 +14,14 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-background border-t mt-10 py-6">
+    <footer className="border-t mt-10 py-6">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
           {/* Branding */}
           <Link href="/" className="text-xl font-bold flex flex-col items-start">
             Deenify.com
-            <span className="text-xs text-muted-foreground">Developed by: Tipu Sultan</span>
+            <span className="text-xs">Developed by: Tipu Sultan</span>
           </Link>
-
-
 
           {/* Navigation Links */}
           <div className="flex space-x-6">
@@ -28,7 +29,9 @@ export default function Footer() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-foreground/80 hover:text-foreground transition-colors"
+                className={`hover:underline transition-colors ${
+                  pathname === item.href ? "underline underline-offset-4" : ""
+                }`}
               >
                 {item.name}
               </Link>
@@ -36,7 +39,7 @@ export default function Footer() {
           </div>
 
           {/* Copyright */}
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm">
             © {new Date().getFullYear()} Deenify.com. All rights reserved.
           </p>
         </div>

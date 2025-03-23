@@ -3,8 +3,9 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { useSession, signIn, signOut } from "next-auth/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +20,7 @@ import Image from "next/image";
 export default function DesktopNavbar() {
   const { theme, setTheme } = useTheme();
   const { data: session, status } = useSession();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -48,23 +50,26 @@ export default function DesktopNavbar() {
             <span className="text-xs text-muted-foreground">Developed by: Tipu Sultan</span>
           </Link>
 
-          {/* Navigation, Theme Toggle, and Profile (Hidden on mobile/tablet, visible on desktop) */}
+          {/* Desktop Navigation, Theme Toggle, and Auth Section */}
           <div className="hidden md:flex items-center space-x-8">
+            {/* Navigation Links (Visible only on desktop) */}
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-foreground/80 hover:text-foreground transition-colors"
+                className={`text-foreground/80 hover:text-foreground transition-colors ${
+                  pathname === item.href ? "underline underline-offset-4" : ""
+                }`}
               >
                 {item.name}
               </Link>
             ))}
 
-            {/* Theme Toggle Button */}
+            {/* Theme Toggle Button (Visible only on desktop) */}
             {mounted && (
               <button
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="p-2 rounded-md hover:bg-accent transition-all"
+                className="p-3 rounded-md hover:bg-accent transition-all"
                 aria-label="Toggle theme"
               >
                 <span className="relative">
@@ -82,8 +87,8 @@ export default function DesktopNavbar() {
               </button>
             )}
 
-            {/* Profile Dropdown */}
-            {status === "authenticated" && session?.user && (
+            {/* Authentication Section (Desktop) */}
+            {status === "authenticated" && session?.user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -121,6 +126,60 @@ export default function DesktopNavbar() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+            ) : (
+              status === "unauthenticated" && (
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Link href="/login">Login</Link>
+                </Button>
+              )
+            )}
+          </div>
+
+          {/* Mobile/Tablet Authentication Section (Visible only on mobile/tablet) */}
+          <div className="flex md:hidden items-center">
+            {status === "authenticated" && session?.user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="p-1 rounded-full hover:bg-accent"
+                  >
+                    <Image
+                      src={session.user.image || "/default-avatar.png"}
+                      alt="Profile"
+                      width={32}
+                      height={32}
+                      className="rounded-full"
+                    />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel className="flex flex-col">
+                    <span>{session.user.name}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {session.user.email}
+                    </span>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" className="w-full cursor-pointer">
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={handleSignOut}
+                    className="cursor-pointer"
+                  >
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              status === "unauthenticated" && (
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Link href="/login">Login</Link>
+                </Button>
+              )
             )}
           </div>
         </div>
