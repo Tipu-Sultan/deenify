@@ -17,7 +17,7 @@ export default function Navbar() {
   const navigation = [
     { name: "Home", href: "/" },
     { name: "Quran", href: "/quran" },
-    { name: "Hadith (Soon)", href: "/#" },
+    { name: "Hadith", href: "/hadith" },
     { name: "Prayer Times", href: "/prayer-times" },
     { name: "Duas", href: "/duas" },
     { name: "blogs", href: "/blog" },

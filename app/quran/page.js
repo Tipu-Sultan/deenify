@@ -17,9 +17,12 @@ export default function QuranPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [currentAyahIndex, setCurrentAyahIndex] = useState(0);
-  const [englishTranslator, setEnglishTranslator] = useState('en.sahih');
+  const [currentAyahIndex, setCurrentAyahIndex] = useState(-1);
+  const [isPlayingUrdu, setIsPlayingUrdu] = useState(false);
   const audioRefs = useRef([]);
+  const urduAudioRefs = useRef([]);
+  const ayahRefs = useRef([]);
+  const [englishTranslator, setEnglishTranslator] = useState('en.sahih');
 
   const englishTranslators = [
     { id: 'en.sahih', name: 'Sahih International' },
@@ -27,6 +30,23 @@ export default function QuranPage() {
     { id: 'en.pickthall', name: 'Pickthall' },
     { id: 'en.yusufali', name: 'Yusuf Ali' },
   ];
+
+  // Base URL for dynamic audio
+  const audioBaseUrl = 'https://minhaj.net/downloads/irfan-ul-quran';
+  const narrators = {
+    arabic: 'Mishary-Rashid-Alafasy',
+    urdu: 'Tasleem-Ahmed-Sabri',
+  };
+
+  // Helper function to format Surah and Ayah numbers
+  const formatNumber = (num) => String(num).padStart(3, '0');
+
+  // Dynamic audio URL generator
+  const getAudioUrl = (narrator, surah, ayah) => {
+    const surahFormatted = formatNumber(surah);
+    const ayahFormatted = formatNumber(ayah);
+    return `${audioBaseUrl}/${narrator}/${surahFormatted}/${surahFormatted}_${ayahFormatted}.mp3`;
+  };
 
   useEffect(() => {
     const fetchMetadata = async () => {
@@ -58,14 +78,14 @@ export default function QuranPage() {
         const verses = arabicResponse.data.data.ayahs.map((ayah, index) => {
           const arabicText = ayah.text || 'Arabic text not available';
           const urduText = urduResponse.data.data.ayahs[index]?.text || 'Urdu not available';
-          console.log('Arabic for Surah Ayah', ayah.numberInSurah, ':', arabicText);
           return {
             arabic: arabicText,
             urdu: urduText,
             hinglish: toHinglish(urduText),
             english: englishResponse.data.data.ayahs[index]?.text || 'English not available',
             numberInSurah: ayah.numberInSurah,
-            audioUrl: `${process.env.NEXT_PUBLIC_QURAN_AUDIO_API}/${ayah.number}.mp3`,
+            audioUrl: getAudioUrl(narrators.arabic, currentSurah, ayah.numberInSurah),
+            urduAudioUrl: getAudioUrl(narrators.urdu, currentSurah, ayah.numberInSurah),
           };
         });
 
@@ -74,7 +94,7 @@ export default function QuranPage() {
           name: arabicResponse.data.data.name,
           englishName: arabicResponse.data.data.englishName,
         });
-        setCurrentAyahIndex(0);
+        setCurrentAyahIndex(-1);
       } catch (err) {
         setError('Failed to load Surah data');
         console.error('Error fetching Surah:', err.response || err);
@@ -102,7 +122,6 @@ export default function QuranPage() {
         const verses = arabicResponse.data.data.ayahs.map((ayah, index) => {
           const arabicText = ayah.text || 'Arabic text not available';
           const urduText = urduResponse.data.data.ayahs[index]?.text || 'Urdu not available';
-          console.log('Arabic for Juz Ayah', ayah.numberInSurah, ':', arabicText);
           return {
             arabic: arabicText,
             urdu: urduText,
@@ -110,7 +129,8 @@ export default function QuranPage() {
             english: englishResponse.data.data.ayahs[index]?.text || 'English not available',
             numberInSurah: ayah.numberInSurah,
             surahId: ayah.surah.number,
-            audioUrl: `${process.env.NEXT_PUBLIC_QURAN_AUDIO_API}/${ayah.number}.mp3`,
+            audioUrl: getAudioUrl(narrators.arabic, ayah.surah.number, ayah.numberInSurah),
+            urduAudioUrl: getAudioUrl(narrators.urdu, ayah.surah.number, ayah.numberInSurah),
           };
         });
 
@@ -118,7 +138,7 @@ export default function QuranPage() {
           verses,
           name: `Juz ${currentJuz}`,
         });
-        setCurrentAyahIndex(0);
+        setCurrentAyahIndex(-1);
       } catch (err) {
         setError('Failed to load Juz data');
         console.error('Error fetching Juz:', err.response || err);
@@ -130,9 +150,16 @@ export default function QuranPage() {
     fetchJuz();
   }, [currentJuz, englishTranslator]);
 
-  // Improved Hinglish conversion
+  useEffect(() => {
+    if (currentAyahIndex >= 0 && ayahRefs.current[currentAyahIndex]) {
+      ayahRefs.current[currentAyahIndex].scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [currentAyahIndex]);
+
   const toHinglish = (urduText) => {
-    // Enhanced transliteration map
     const translitMap = {
       'ا': 'a', 'آ': 'aa', 'ب': 'b', 'پ': 'p', 'ت': 't', 'ٹ': 't', 'ث': 's', 'ج': 'j',
       'چ': 'ch', 'ح': 'h', 'خ': 'kh', 'د': 'd', 'ڈ': 'd', 'ذ': 'z', 'ر': 'r', 'ڑ': 'r',
@@ -141,52 +168,47 @@ export default function QuranPage() {
       'ن': 'n', 'ں': 'n', 'و': 'w', 'ہ': 'h', 'ھ': 'h', 'ی': 'y', 'ے': 'e',
     };
 
-    // Common Urdu-to-Hinglish word replacements
     const wordMap = {
-      'اللہ': 'Allah',
-      'ہے': 'hai',
-      'نہیں': 'nahi',
-      'اور': 'aur',
-      'کے': 'ke',
-      'میں': 'mein',
-      'پر': 'par',
-      'سے': 'se',
-      'کا': 'ka',
-      'کی': 'ki',
-      'کو': 'ko',
-      'ہم': 'hum',
-      'تم': 'tum',
-      'سورج': 'Suraj',
-      'چاند': 'Chand',
-      'ایک': 'ek',
-      'حساب': 'hisaab',
-      'مقرر': 'muqarrar',
-      'چل': 'chal',
-      'رہے': 'rahe',
-      'ہیں': 'hain',
+      'اللہ': 'Allah', 'ہے': 'hai', 'نہیں': 'nahi', 'اور': 'aur', 'کے': 'ke', 'میں': 'mein',
+      'پر': 'par', 'سے': 'se', 'کا': 'ka', 'کی': 'ki', 'کو': 'ko', 'ہم': 'hum', 'تم': 'tum',
     };
 
-    // Split Urdu text into words
     const words = urduText.split(' ');
     const hinglishWords = words.map((word) => {
-      // Check if word is in the replacement map
       if (wordMap[word]) return wordMap[word];
-
-      // Transliterate character by character if no direct match
       return word.split('').map((char) => translitMap[char] || char).join('');
     });
 
-    // Join words and clean up
     return hinglishWords.join(' ').replace(/\s+/g, ' ').trim();
   };
 
-  const handleAudioEnded = (index) => {
+  const handleArabicAudioEnded = (index) => {
+    const data = surahData || juzData;
+    if (!data || !data.verses[index]) return;
+
+    setIsPlayingUrdu(true);
+    if (urduAudioRefs.current[index]?.audio.current) {
+      urduAudioRefs.current[index].audio.current.play();
+    } else {
+      handleNextAyah(index); // Skip if no Urdu audio
+    }
+  };
+
+  const handleUrduAudioEnded = (index) => {
+    setIsPlayingUrdu(false);
+    handleNextAyah(index);
+  };
+
+  const handleNextAyah = (index) => {
     const data = surahData || juzData;
     if (index + 1 < data.verses.length) {
       setCurrentAyahIndex(index + 1);
       setTimeout(() => {
         audioRefs.current[index + 1]?.audio.current?.play();
       }, 500);
+    } else {
+      setCurrentAyahIndex(-1);
+      setIsPlayingUrdu(false);
     }
   };
 
@@ -310,8 +332,11 @@ export default function QuranPage() {
             <div className="space-y-6 max-h-[60vh] overflow-y-auto">
               {displayData?.verses?.map((ayah, index) => (
                 <div
+                  ref={(el) => (ayahRefs.current[index] = el)}
                   key={`${ayah.surahId || currentSurah}-${ayah.numberInSurah}`}
-                  className="border-b pb-4 hover:bg-muted/50 transition-colors rounded-lg p-4"
+                  className={`border-b pb-4 transition-colors rounded-lg p-4 ${
+                    currentAyahIndex === index ? 'bg-primary/20' : 'hover:bg-muted/50'
+                  }`}
                 >
                   <p className="text-3xl font-arabic text-right mb-4">
                     {ayah.arabic || 'Arabic text missing'}
@@ -337,9 +362,27 @@ export default function QuranPage() {
                       customProgressBarSection={[]}
                       customControlsSection={['MAIN_CONTROLS', 'VOLUME_CONTROLS']}
                       className="mt-4 bg-background rounded-lg shadow-sm"
-                      autoPlayAfterSrcChange={index === currentAyahIndex}
-                      onEnded={() => handleAudioEnded(index)}
-                      onError={(e) => console.error('Audio error:', e)}
+                      autoPlayAfterSrcChange={currentAyahIndex === index && !isPlayingUrdu}
+                      onPlay={() => {
+                        setCurrentAyahIndex(index);
+                        setIsPlayingUrdu(false);
+                      }}
+                      onEnded={() => handleArabicAudioEnded(index)}
+                      onError={(e) => console.error('Arabic audio error:', e)}
+                    />
+                  )}
+                  {ayah.urduAudioUrl && (
+                    <AudioPlayer
+                      ref={(el) => (urduAudioRefs.current[index] = el)}
+                      src={ayah.urduAudioUrl}
+                      showJumpControls={false}
+                      customProgressBarSection={[]}
+                      customControlsSection={['MAIN_CONTROLS', 'VOLUME_CONTROLS']}
+                      className="mt-2 bg-background rounded-lg shadow-sm"
+                      autoPlayAfterSrcChange={currentAyahIndex === index && isPlayingUrdu}
+                      onPlay={() => setIsPlayingUrdu(true)}
+                      onEnded={() => handleUrduAudioEnded(index)}
+                      onError={(e) => console.error('Urdu audio error:', e)}
                     />
                   )}
                 </div>
