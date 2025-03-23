@@ -27,7 +27,7 @@ export default function MobileNavbar() {
   const navigation = [
     { name: "Home", href: "/", icon: <Home className="h-5 w-5" /> },
     { name: "Quran", href: "/quran", icon: <Book className="h-5 w-5" /> },
-    { name: "Hadith", href: "/hadith" },
+    { name: "Hadith (soon)", href: "/#" },
     { name: "Prayer Times", href: "/prayer-times", icon: <Clock className="h-5 w-5" /> },
     { name: "Duas", href: "/duas", icon: <Heart className="h-5 w-5" /> },
     { name: "Blogs", href: "/blog" },

@@ -15,7 +15,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@/components/ui/avatar"; // Import Avatar components
 
 export default function DesktopNavbar() {
   const { theme, setTheme } = useTheme();
@@ -30,7 +34,7 @@ export default function DesktopNavbar() {
   const navigation = [
     { name: "Home", href: "/" },
     { name: "Quran", href: "/quran" },
-    { name: "Hadith", href: "/hadith" },
+    { name: "Hadith (soon)", href: "/#" },
     { name: "Prayer Times", href: "/prayer-times" },
     { name: "Duas", href: "/duas" },
     { name: "Blogs", href: "/blog" },
@@ -95,13 +99,15 @@ export default function DesktopNavbar() {
                     variant="ghost"
                     className="flex items-center gap-2 p-1 rounded-full hover:bg-accent"
                   >
-                    <Image
-                      src={session.user.image || "/default-avatar.png"}
-                      alt="Profile"
-                      width={32}
-                      height={32}
-                      className="rounded-full"
-                    />
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage
+                        src={session.user.image || "/default-avatar.png"}
+                        alt="Profile"
+                      />
+                      <AvatarFallback>
+                        {session.user.name?.charAt(0) || "U"}
+                      </AvatarFallback>
+                    </Avatar>
                     <span className="text-foreground/80">{session.user.name}</span>
                   </Button>
                 </DropdownMenuTrigger>
@@ -144,13 +150,15 @@ export default function DesktopNavbar() {
                     variant="ghost"
                     className="p-1 rounded-full hover:bg-accent"
                   >
-                    <Image
-                      src={session.user.image || "/default-avatar.png"}
-                      alt="Profile"
-                      width={32}
-                      height={32}
-                      className="rounded-full"
-                    />
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage
+                        src={session.user.image || "/default-avatar.png"}
+                        alt="Profile"
+                      />
+                      <AvatarFallback>
+                        {session.user.name?.charAt(0) || "U"}
+                      </AvatarFallback>
+                    </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">

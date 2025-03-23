@@ -1,11 +1,6 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // Optional: for active link highlighting
 
 export default function Footer() {
-  const pathname = usePathname(); // Optional: for active link highlighting
-
   const navigation = [
     { name: "Home", href: "/" },
     { name: "Quran", href: "/quran" },
@@ -29,9 +24,7 @@ export default function Footer() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`hover:underline transition-colors ${
-                  pathname === item.href ? "underline underline-offset-4" : ""
-                }`}
+                className={`hover:underline transition-colors`}
               >
                 {item.name}
               </Link>
