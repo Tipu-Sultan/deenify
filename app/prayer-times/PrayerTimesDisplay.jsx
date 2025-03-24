@@ -4,15 +4,17 @@ export default function PrayerTimesDisplay({ prayers, hijriDate, cityName, timez
   return (
     <>
       <div className="bg-card rounded-xl p-6 shadow-lg mb-8">
-        {/* Location Display */}
-        <div className="flex items-center justify-center gap-2 mb-6 text-muted-foreground">
-          <MapPin className="h-5 w-5" />
-          <span>{cityName}</span>
-          {timezone && <span className="text-sm">({timezone})</span>}
+        {/* Location and Current Time */}
+        <div className="flex flex-col items-center gap-4 mb-6">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <MapPin className="h-5 w-5" />
+            <span>{cityName}</span>
+            {timezone && <span className="text-sm">({timezone})</span>}
+          </div>
         </div>
 
         {/* Prayer Times */}
-        <div className="grid gap-4 md:grid-cols-2 mb-8">
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 mb-8">
           {prayers.map((prayer) => (
             <div
               key={prayer.name}

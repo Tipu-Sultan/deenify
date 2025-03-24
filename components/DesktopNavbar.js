@@ -29,7 +29,7 @@ export default function DesktopNavbar() {
   const navigation = [
     { name: "Home", href: "/" },
     { name: "Quran", href: "/quran" },
-    { name: "Hadith (soon)", href: "/#" },
+    { name: "Hadith (ongoing)", href: "/hadith" },
     { name: "Prayer Times", href: "/prayer-times" },
     { name: "Duas", href: "/duas" },
     { name: "Blogs", href: "/blog" },

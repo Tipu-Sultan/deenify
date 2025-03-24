@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
-import { Home, Book, Clock, Heart, Menu, Moon, Sun } from "lucide-react";
+import { Home, Book, Clock, Heart, Menu, Moon, Sun, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -27,7 +27,7 @@ export default function MobileNavbar() {
   const navigation = [
     { name: "Home", href: "/", icon: <Home className="h-5 w-5" /> },
     { name: "Quran", href: "/quran", icon: <Book className="h-5 w-5" /> },
-    { name: "Hadith (soon)", href: "/#" },
+    { name: "Hadith", href: "/hadith", icon: <BookOpen className="h-5 w-5" /> },
     {
       name: "Prayer Times",
       href: "/prayer-times",
@@ -51,6 +51,9 @@ export default function MobileNavbar() {
           </Link>
           <Link href="/quran" className="p-2">
             <Book className="h-6 w-6 text-foreground/80 hover:text-foreground" />
+          </Link>
+          <Link href="/hadith" className="p-2">
+            <BookOpen className="h-6 w-6 text-foreground/80 hover:text-foreground" />
           </Link>
           <Link href="/prayer-times" className="p-2">
             <Clock className="h-6 w-6 text-foreground/80 hover:text-foreground" />
