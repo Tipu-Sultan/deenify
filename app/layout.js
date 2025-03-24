@@ -17,6 +17,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta
+          name="google-site-verification"
+          content="MgAlLUfNQ_EqUemSJdUo_t6xAWPCvcvQEQkMO4LJBho"
+        />
+        <meta name="description" content="Deenify offers Islamic resources, tools, and content for Muslims worldwide." />
+      </head>
       <body className={inter.className}>
         <ClientProvider>
           <ThemeProvider
@@ -25,10 +32,10 @@ export default function RootLayout({ children }) {
             enableSystem
             disableTransitionOnChange
           >
-            <Toaster/>
+            <Toaster />
             <DesktopNavbar />
             <main className="container mx-auto px-4 py-8">{children}</main>
-            <MobileNavbar/>
+            <MobileNavbar />
             <Footer />
           </ThemeProvider>
         </ClientProvider>
