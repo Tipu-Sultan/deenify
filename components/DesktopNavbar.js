@@ -25,11 +25,6 @@ export default function DesktopNavbar() {
   const { theme, setTheme } = useTheme();
   const { data: session, status } = useSession();
   const pathname = usePathname();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const navigation = [
     { name: "Home", href: "/" },
@@ -69,8 +64,7 @@ export default function DesktopNavbar() {
               </Link>
             ))}
 
-            {/* Theme Toggle Button (Visible only on desktop) */}
-            {mounted && (
+        
               <button
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 className="p-3 rounded-md hover:bg-accent transition-all"
@@ -89,7 +83,7 @@ export default function DesktopNavbar() {
                   />
                 </span>
               </button>
-            )}
+            
 
             {/* Authentication Section (Desktop) */}
             {status === "authenticated" && session?.user ? (
@@ -139,6 +133,11 @@ export default function DesktopNavbar() {
                 </Button>
               )
             )}
+            {session?.user?.isAdmin && (
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Link href="/admin">Admin</Link>
+                </Button>
+              )}
           </div>
 
           {/* Mobile/Tablet Authentication Section (Visible only on mobile/tablet) */}

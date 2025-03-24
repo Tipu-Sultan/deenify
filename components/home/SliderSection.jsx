@@ -36,7 +36,7 @@ export default function SliderSection() {
   };
 
   return (
-    <section className="relative h-[80vh] flex items-center justify-center overflow-hidden w-full">
+    <section className=" h-[80vh] flex items-center justify-center overflow-hidden w-full">
       {/* Slider Images */}
       <div className="absolute inset-0 -z-10">
         {sliderImages.map((slide, index) => (

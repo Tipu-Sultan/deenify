@@ -1,110 +1,53 @@
-"use client";
+'use server';
 
-import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, User, Clock, Activity } from "lucide-react";
+import DeenifyUser from "@/models/DeenifyUser";
+import { authOptions } from "@/lib/authOptions";
 
-export default function ProfilePage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+export default async function ProfilePage() {
+  const session = await getServerSession(authOptions);
 
-  // Loading state with Skeleton UI
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen py-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-8">
-            <Skeleton className="h-9 w-1/4" />
-            <Skeleton className="h-10 w-32" />
-          </div>
-          <Card className="mb-8 shadow-lg">
-            <CardHeader className="flex flex-col sm:flex-row items-center gap-4">
-              <Skeleton className="w-24 h-24 rounded-full" />
-              <div className="space-y-2 text-center sm:text-left w-full sm:w-auto">
-                <Skeleton className="h-6 w-1/2" />
-                <Skeleton className="h-4 w-3/4" />
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Skeleton className="h-5 w-full" />
-              <Skeleton className="h-4 w-2/3" />
-            </CardContent>
-          </Card>
-          <Card className="mb-8 shadow-lg">
-            <CardHeader>
-              <Skeleton className="h-6 w-1/3" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-5/6 mt-3" />
-            </CardContent>
-          </Card>
-          <Card className="shadow-lg">
-            <CardHeader>
-              <Skeleton className="h-6 w-1/3" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-5/6 mt-3" />
-              <Skeleton className="h-4 w-2/3 mt-3" />
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
+  if (!session) {
+    redirect("/login");
   }
 
-  // Redirect to sign-in if unauthenticated
-  if (status === "unauthenticated") {
-    router.push("/login");
-    return null;
-  }
+  const user = await DeenifyUser.findOne({ _id: session?.user?.id })
 
-  const user = session?.user;
+  if (!user) {
+    return <p className="text-center text-red-500">User not found</p>;
+  }
 
   return (
     <div className="min-h-screen py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Your Profile</h1>
-          <Button
-            variant="outline"
-            onClick={() => signOut({ callbackUrl: "/" })}
-            className="flex items-center gap-2"
-          >
-            <LogOut className="w-4 h-4" />
-            Sign Out
-          </Button>
+          <form action="/api/auth/signout" method="POST">
+            <Button variant="outline" className="flex items-center gap-2">
+              <LogOut className="w-4 h-4" />
+              Sign Out
+            </Button>
+          </form>
         </div>
 
-        {/* Profile Card */}
         <Card className="mb-8 shadow-lg">
           <CardHeader className="flex flex-col sm:flex-row items-center gap-4">
             <Avatar className="w-24 h-24">
-              <AvatarImage src={user?.image} alt={user?.name} />
+              <AvatarImage src={user.picture} alt={user.name} />
               <AvatarFallback className="text-2xl">
-                {user?.name?.[0]?.toUpperCase() || "U"}
+                {user.name?.charAt(0).toUpperCase() || "U"}
               </AvatarFallback>
             </Avatar>
             <div className="text-center sm:text-left">
               <CardTitle className="text-2xl font-semibold">
-                {user?.name || "Anonymous"}
+                {user.name || "Anonymous"}
               </CardTitle>
-              <p className="text-sm">{user?.email || "No email provided"}</p>
+              <p className="text-sm">{user.email || "No email provided"}</p>
             </div>
           </CardHeader>
           <CardContent>
@@ -112,55 +55,43 @@ export default function ProfilePage() {
               <div className="flex items-center gap-2">
                 <User className="w-5 h-5" />
                 <span>
-                  <strong>ID:</strong> {user?.id || "N/A"}
+                  <strong>ID:</strong> {user.id}
                 </span>
               </div>
-              <p className="text-sm">
-                Joined via Google authentication
-              </p>
+              <p className="text-sm">Joined on {new Date(user.createdAt).toLocaleDateString()}</p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Activity Section */}
         <Card className="mb-8 shadow-lg">
           <CardHeader>
             <CardTitle className="text-xl font-semibold flex items-center gap-2">
-              <Activity className="w-5 h-5" />
-              Recent Activity
+              <Activity className="w-5 h-5" /> Recent Activity
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-3">
               <li className="flex items-center gap-2">
                 <Clock className="w-4 h-4" />
-                <span>Logged in on {new Date().toLocaleDateString()}</span>
-              </li>
-              <li className="italic">
-                More activity tracking coming soon...
+                <span>Last login: {new Date(user.createdAt).toLocaleDateString()}</span>
               </li>
             </ul>
           </CardContent>
         </Card>
 
-        {/* Additional Info Section */}
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="text-xl font-semibold flex items-center gap-2">
-              <User className="w-5 h-5" />
-              Additional Info
+              <User className="w-5 h-5" /> Additional Info
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <p>
-                <strong>Preferences:</strong> Not set yet
+                <strong>Preferences:</strong> {user.preferences || "Not set yet"}
               </p>
               <p>
-                <strong>Favorite Surah:</strong> Not set yet
-              </p>
-              <p className="text-sm">
-                Customize your profile by adding more details in the future!
+                <strong>Favorite Surah:</strong> {user.favoriteSurah || "Not set yet"}
               </p>
             </div>
           </CardContent>

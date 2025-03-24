@@ -2,7 +2,7 @@ import PrayerTimesControls from "./PrayerTimesControls";
 import PrayerTimesDisplay from "./PrayerTimesDisplay";
 
 // Fetch prayer times server-side (replace with your actual API logic)
-async function fetchPrayerTimes(city = "Mumbai") {
+async function fetchPrayerTimes(city = "Lucknow") {
   const url = `http://api.aladhan.com/v1/timingsByCity?city=${city}&country=India&method=2`; // ISNA method
   const response = await fetch(url, { cache: "no-store" });
   if (!response.ok) throw new Error("Failed to fetch prayer times");

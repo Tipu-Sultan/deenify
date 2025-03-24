@@ -11,7 +11,7 @@ export default function LoginForm() {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      await signIn('google', { callbackUrl: '/quran' });
+      await signIn('google', { callbackUrl: '/' });
     } catch (error) {
       console.error('Sign-in error:', error);
       setLoading(false);

@@ -28,7 +28,11 @@ export default function MobileNavbar() {
     { name: "Home", href: "/", icon: <Home className="h-5 w-5" /> },
     { name: "Quran", href: "/quran", icon: <Book className="h-5 w-5" /> },
     { name: "Hadith (soon)", href: "/#" },
-    { name: "Prayer Times", href: "/prayer-times", icon: <Clock className="h-5 w-5" /> },
+    {
+      name: "Prayer Times",
+      href: "/prayer-times",
+      icon: <Clock className="h-5 w-5" />,
+    },
     { name: "Duas", href: "/duas", icon: <Heart className="h-5 w-5" /> },
     { name: "Blogs", href: "/blog" },
   ];
@@ -78,7 +82,9 @@ export default function MobileNavbar() {
                 {/* Theme Toggle */}
                 {mounted && (
                   <button
-                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                    onClick={() =>
+                      setTheme(theme === "dark" ? "light" : "dark")
+                    }
                     className="block w-full text-left px-4 py-2 text-foreground/80 hover:text-foreground hover:bg-accent/50 rounded-md transition-colors"
                   >
                     <span className="flex items-center gap-2">
@@ -90,6 +96,12 @@ export default function MobileNavbar() {
                       Toggle Theme
                     </span>
                   </button>
+                )}
+
+                {session?.user?.isAdmin && (
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <Link href="/admin">Admin</Link>
+                  </Button>
                 )}
 
                 {/* Profile and Sign Out */}
@@ -104,7 +116,9 @@ export default function MobileNavbar() {
                         className="rounded-full"
                       />
                       <div>
-                        <p className="text-foreground/80">{session.user.name}</p>
+                        <p className="text-foreground/80">
+                          {session.user.name}
+                        </p>
                         <p className="text-sm text-muted-foreground">
                           {session.user.email}
                         </p>
