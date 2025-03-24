@@ -44,15 +44,6 @@ export default async function DuasPage({ searchParams }) {
           categories={categories}
           initialCategory={category}
         />
-
-        {/* Server-rendered dua list */}
-        <div className="grid gap-6">
-          {duas.length === 0 ? (
-            <div className="text-center py-12">No duas found.</div>
-          ) : (
-            duas.map((dua, index) => <DuaCard key={index} dua={dua} />)
-          )}
-        </div>
       </div>
     </div>
   );

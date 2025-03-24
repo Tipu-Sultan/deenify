@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/db";
 import DeenifyBlog from "@/models/DeenifyBlog";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
 
 export async function GET(request, { params }) {
   try {
@@ -68,5 +70,46 @@ export async function DELETE(request, { params }) {
       { error: "Failed to delete blog" },
       { status: 500 }
     );
+  }
+}
+
+export async function POST(request, { params }) {
+  try {
+    await connectToDatabase();
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { slug } = params;
+    const userId = session.user.id;
+
+    const blog = await DeenifyBlog.findOne({ slug });
+
+    if (!blog) {
+      return NextResponse.json({ error: "Blog not found" }, { status: 404 });
+    }
+
+    // Check if user already liked the blog
+    const hasLiked = blog.likes.includes(userId);
+
+    if (hasLiked) {
+      // Unlike: Remove user ID from likes array
+      blog.likes = blog.likes.filter((id) => id.toString() !== userId);
+    } else {
+      // Like: Add user ID to likes array
+      blog.likes.push(userId);
+    }
+
+    await blog.save();
+
+    return NextResponse.json(
+      { likes: blog.likes.length, hasLiked: !hasLiked },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error toggling like:", error);
+    return NextResponse.json({ error: "Failed to toggle like" }, { status: 500 });
   }
 }

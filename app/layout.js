@@ -5,6 +5,7 @@ import DesktopNavbar from "../components/DesktopNavbar";
 import Footer from "../components/footer";
 import ClientProvider from "./ClientProvider";
 import MobileNavbar from "@/components/MobileNavbar";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,6 +25,7 @@ export default function RootLayout({ children }) {
             enableSystem
             disableTransitionOnChange
           >
+            <Toaster/>
             <DesktopNavbar />
             <main className="container mx-auto px-4 py-8">{children}</main>
             <MobileNavbar/>

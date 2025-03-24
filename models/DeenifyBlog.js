@@ -25,6 +25,12 @@ const BlogSchema = new mongoose.Schema({
     type: String,
     default:''
   },
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "DeenifyUser", 
+    }
+  ],
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "DeenifyUser", 

@@ -146,7 +146,7 @@ export default function CreateBlogs() {
                   <FormControl>
                     <select
                       {...field}
-                      className="w-full p-2 border rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full p-2 border rounded-md  focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">Select a category</option>
                       {categories.map((cat) => (

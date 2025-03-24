@@ -14,6 +14,7 @@ export default function ClientDuaControls({ initialDuas, categories, initialCate
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // Fetch duas when category changes
   useEffect(() => {
     async function fetchDuas() {
       setLoading(true);
@@ -36,25 +37,27 @@ export default function ClientDuaControls({ initialDuas, categories, initialCate
     }
   }, [selectedCategory, searchParams, router]);
 
+  // Filter duas based on search query
   const filteredDuas = duas.filter((dua) =>
-    [dua.title, dua.arabic, dua.translation, dua.latin]
-      .filter(Boolean)
-      .some((field) => field.toLowerCase().includes(searchQuery.toLowerCase()))
+    dua.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    dua.content?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div className="flex flex-col gap-6 mb-12">
+    <div className="flex flex-col gap-6">
+      {/* Search Input */}
       <div className="relative">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5" />
         <input
           type="text"
-          placeholder="Search duas..."
+          placeholder="Search sleeping,bathroom,mosque..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full pl-12 pr-4 py-3 border rounded-xl shadow-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
         />
       </div>
 
+      {/* Category Buttons */}
       <div className="flex flex-wrap gap-3 justify-center">
         {categories.map((category) => (
           <button
@@ -81,8 +84,8 @@ export default function ClientDuaControls({ initialDuas, categories, initialCate
         </button>
       </div>
 
-      {/* Loading state */}
-      {loading && (
+      {/* Dua List or Loading State */}
+      {loading ? (
         <div className="grid gap-6">
           {[...Array(3)].map((_, index) => (
             <div key={index} className="p-6 rounded-xl border shadow-sm">
@@ -92,6 +95,16 @@ export default function ClientDuaControls({ initialDuas, categories, initialCate
               <Skeleton className="h-4 w-1/3" />
             </div>
           ))}
+        </div>
+      ) : (
+        <div className="grid gap-6">
+          {filteredDuas.length === 0 ? (
+            <div className="text-center py-12 text-gray-600">
+              No duas found matching your search.
+            </div>
+          ) : (
+            filteredDuas.map((dua, index) => <DuaCard key={index} dua={dua} />)
+          )}
         </div>
       )}
     </div>

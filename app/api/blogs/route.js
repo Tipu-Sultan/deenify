@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import DeenifyBlog from "@/models/DeenifyBlog";
 import connectToDatabase from "@/lib/db";
+import { authOptions } from "@/lib/authOptions";
+import { getServerSession } from "next-auth";
 
 export async function POST(request) {
   try {
@@ -25,10 +27,32 @@ export async function POST(request) {
   }
 }
 
-export async function GET() {
+export async function GET(request) {
   try {
-    const blogs = await DeenifyBlog.find().populate("author", "name email");
-    const plainBlogs = blogs.map((blog) => blog.toObject()); // Convert Mongoose docs to plain objects
+    // Connect to the database
+    await connectToDatabase();
+
+    // Get the current session
+    const session = await getServerSession(authOptions);
+
+console.log('session.user')
+    // Check if the user is authenticated
+    if (!session || !session.user?.id) {
+      return NextResponse.json(
+        { error: "Unauthorized: Please log in" },
+        { status: 401 }
+      );
+    }
+
+    // Fetch blogs where the author matches the current user's ID
+    const blogs = await DeenifyBlog.find({ author: session.user.id }).populate(
+      "author",
+      "name email"
+    );
+
+    // Convert Mongoose documents to plain objects
+    const plainBlogs = blogs.map((blog) => blog.toObject());
+
     return NextResponse.json(plainBlogs, { status: 200 });
   } catch (error) {
     console.error("Error fetching blogs:", error);
