@@ -18,10 +18,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <meta
-          name="google-site-verification"
-          content="MgAlLUfNQ_EqUemSJdUo_t6xAWPCvcvQEQkMO4LJBho"
-        />
+      <meta name="google-site-verification" content="MgAlLUfNQ_EqUemSJdUo_t6xAWPCvcvQEQkMO4LJBho" />
         <meta name="description" content="Deenify offers Islamic resources, tools, and content for Muslims worldwide." />
       </head>
       <body className={inter.className}>
