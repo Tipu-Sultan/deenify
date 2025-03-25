@@ -7,6 +7,19 @@ import { AlertCircle, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
+export async function generateMetadata({ params }) {
+  const categorySlug = params.category;
+  const categoryName = categorySlug
+    .split("-")
+    .map((word) => (word === "and" ? "and" : word.charAt(0).toUpperCase() + word.slice(1)))
+    .join(" ");
+
+  return {
+    title: `${categoryName} Blogs | Deenify`,
+    description: `Discover ${categoryName} blogs on Deenify. Read insightful articles updated regularly.`,
+  };
+}
+
 export default async function CategoryBlogsPage({ params, searchParams }) {
   const categorySlug = params.category;
   const page = parseInt(searchParams.page || "1", 10);

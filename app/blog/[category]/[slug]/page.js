@@ -10,6 +10,19 @@ import { authOptions } from "@/lib/authOptions";
 import mongoose from "mongoose";
 import Image from "next/image";
 
+export async function generateMetadata({ params }) {
+  const blog = await getBlogBySlug(params.slug);
+  if (!blog || blog.category.toLowerCase().replace(/\s+/g, "-") !== params.category) {
+    return { title: "Not Found | Deenify" };
+  }
+
+  const excerpt = blog.content.replace(/<[^>]+>/g, "").substring(0, 150) + "...";
+  return {
+    title: `${blog.title} | Deenify`,
+    description: excerpt,
+  };
+}
+
 export default async function BlogDetail({ params }) {
   // Fetch the blog by slug
   const blog = await getBlogBySlug(params.slug);
