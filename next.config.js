@@ -4,7 +4,10 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  images: { unoptimized: true },
+  reactStrictMode: true, // Catches potential issues
+  images: {
+    domains: ['https://unsplash.com/'], // For Next.js Image component
+  },
 };
 
 module.exports = nextConfig;

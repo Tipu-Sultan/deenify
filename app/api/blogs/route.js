@@ -42,16 +42,58 @@ export async function GET(request) {
       );
     }
 
-    // Fetch blogs where the author matches the current user's ID
-    const blogs = await DeenifyBlog.find({ author: session.user.id }).populate(
-      "author",
-      "name email"
-    );
+    // Extract pagination parameters from the request URL
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = 10; // Fixed limit of 10 blogs per page
+    const skip = (page - 1) * limit;
+
+    // Determine the query based on user role
+    let query = {};
+    const userId = session.user.id;
+    const isSuperAdmin = session.user.isSuperAdmin === true;
+    const isAdmin = session.user.isAdmin === true;
+
+    if (isSuperAdmin) {
+      // Super admins see all blogs
+      query = {};
+    } else if (isAdmin) {
+      // Admins see only their own blogs
+      query = { author: userId };
+    } else {
+      // Regular users see only their own blogs
+      query = { author: userId };
+    }
+
+    // Fetch blogs with pagination
+    const blogs = await DeenifyBlog.find(query)
+      .populate("author", "name email")
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 }); // Optional: Sort by creation date, newest first
+
+    // Get the total count of blogs for pagination metadata
+    const totalBlogs = await DeenifyBlog.countDocuments(query);
+    const totalPages = Math.ceil(totalBlogs / limit);
 
     // Convert Mongoose documents to plain objects
     const plainBlogs = blogs.map((blog) => blog.toObject());
 
-    return NextResponse.json(plainBlogs, { status: 200 });
+    // Return blogs with pagination metadata
+    return NextResponse.json(
+      {
+        blogs: plainBlogs,
+        pagination: {
+          currentPage: page,
+          totalPages: totalPages,
+          totalBlogs: totalBlogs,
+          limit: limit,
+          hasNextPage: page < totalPages,
+          hasPrevPage: page > 1,
+        },
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error fetching blogs:", error);
     return NextResponse.json(

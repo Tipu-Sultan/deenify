@@ -7,12 +7,9 @@ import { authOptions } from "@/lib/authOptions";
 export async function GET(request, { params }) {
   try {
     await connectToDatabase();
-    const { id } = await params;
+    const { slug } = params; // `slug` is a string from the route
 
-    // Assuming 'id' could be a slug or MongoDB _id
-    const blog = await DeenifyBlog.findOne({
-      $or: [{ _id: id }, { slug: id }],
-    }).populate("author", "name email");
+    const blog = await DeenifyBlog.findOne({ slug }).populate("author", "name email");
 
     if (!blog) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
@@ -31,12 +28,14 @@ export async function GET(request, { params }) {
 export async function PUT(request, { params }) {
   try {
     await connectToDatabase();
-    const { id } = await params;
+    const { slug } = params;
     const data = await request.json();
 
-    const updatedBlog = await DeenifyBlog.findByIdAndUpdate(id, data, {
-      new: true,
-    });
+    const updatedBlog = await DeenifyBlog.findOneAndUpdate(
+      { slug },
+      data,
+      { new: true }
+    );
 
     if (!updatedBlog) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
@@ -55,9 +54,9 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     await connectToDatabase();
-    const { id } = await params;
+    const { slug } = params;
 
-    const deletedBlog = await DeenifyBlog.findByIdAndDelete(id);
+    const deletedBlog = await DeenifyBlog.findOneAndDelete({ slug });
 
     if (!deletedBlog) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });

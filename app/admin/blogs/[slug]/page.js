@@ -24,7 +24,7 @@ import "react-quill/dist/quill.snow.css";
 
 export default function EditBlog() {
   const router = useRouter();
-  const { id } = useParams(); // Get the blog ID from the URL
+  const { slug } = useParams(); // Get the blog ID from the URL
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { data: session, status } = useSession();
@@ -37,7 +37,7 @@ export default function EditBlog() {
   useEffect(() => {
     async function fetchBlog() {
       try {
-        const response = await fetch(`/api/blogs/${id}`);
+        const response = await fetch(`/api/blogs/${slug}`);
         if (!response.ok) {
           throw new Error("Failed to fetch blog");
         }
@@ -61,10 +61,10 @@ export default function EditBlog() {
       }
     }
 
-    if (id) {
+    if (slug) {
       fetchBlog();
     }
-  }, [id, form, router]);
+  }, [slug, form, router]);
 
   async function onSubmit(values) {
     if (!values.title || !values.slug || !values.content) {
@@ -81,7 +81,7 @@ export default function EditBlog() {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/blogs/${id}`, {
+      const response = await fetch(`/api/blogs/${slug}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
