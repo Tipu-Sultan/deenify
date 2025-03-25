@@ -39,7 +39,7 @@ export default function UsersPage() {
     if (status === "authenticated" && session?.user?.isSuperAdmin) {
       const fetchUsers = async () => {
         try {
-          const res = await fetch("/api/users", {
+          const res = await fetch("/api/auth/users", {
             headers: {
               "Content-Type": "application/json",
               // Remove Authorization header if not needed, or adjust based on your auth setup
@@ -61,7 +61,7 @@ export default function UsersPage() {
   // Toggle isAdmin status
   const handleToggleAdmin = async (userId, currentStatus) => {
     try {
-      const res = await fetch(`/api/users/${userId}`, {
+      const res = await fetch(`/api/auth/users/${userId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -86,7 +86,7 @@ export default function UsersPage() {
   // Toggle isSuperAdmin status
   const handleToggleSuperAdmin = async (userId, currentStatus) => {
     try {
-      const res = await fetch(`/api/users/${userId}`, {
+      const res = await fetch(`/api/auth/users/${userId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -113,7 +113,7 @@ export default function UsersPage() {
     if (!confirm("Are you sure you want to delete this user?")) return;
 
     try {
-      const res = await fetch(`/api/users/${userId}`, {
+      const res = await fetch(`/api/auth/users/${userId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

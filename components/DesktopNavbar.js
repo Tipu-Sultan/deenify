@@ -22,6 +22,7 @@ export default function DesktopNavbar() {
   const { data: session, status } = useSession();
   const pathname = usePathname();
 
+
   const navigation = [
     { name: "Home", href: "/" },
     { name: "Quran", href: "/quran" },
