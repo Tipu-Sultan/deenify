@@ -54,12 +54,6 @@ export default async function BlogDetail({ params }) {
 
   return (
     <div className="container max-w-5xl mx-auto px-4 py-8 max-w-4xl">
-      <Head>
-        <title>{title}</title>
-        <meta name="description" content={description} />
-        <meta name="keywords" content={keywords} />
-      </Head>
-      {/* Back Button (Top) */}
       <div className="mb-6">
         <Link href={`/blog/${categorySlug}`}>
           <Button variant="outline" className="w-full sm:w-auto">
