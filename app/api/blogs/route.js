@@ -18,7 +18,6 @@ export async function POST(request) {
     const data = await request.json();
     const blog = await DeenifyBlog.create({
         ...data,
-        author: token.id,
       })
     return NextResponse.json(blog, { status: 201 });
   } catch (error) {
@@ -35,7 +34,6 @@ export async function GET(request) {
     // Get the current session
     const session = await getServerSession(authOptions);
 
-console.log('session.user')
     // Check if the user is authenticated
     if (!session || !session.user?.id) {
       return NextResponse.json(

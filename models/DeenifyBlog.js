@@ -36,6 +36,11 @@ const BlogSchema = new mongoose.Schema({
     ref: "DeenifyUser", 
     required: true,
   },
+  authorGoogleId: {
+    type: String,
+    required: true,
+    index: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

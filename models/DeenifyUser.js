@@ -23,6 +23,10 @@ const DeenifyUserSchema = new mongoose.Schema({
     type: Boolean,
     default:false
   },
+  isSuperAdmin: {
+    type: Boolean,
+    default:false
+  },
   createdAt: {
     type: Date,
     default: Date.now,

@@ -64,7 +64,8 @@ export default function CreateBlogs() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
-          author: session.user.id, // Include author ID from session
+          author: session.user.id, 
+          authorGoogleId: session.user.googleId,
         }),
       });
 

@@ -38,6 +38,7 @@ export default async function BlogDetail({ params }) {
     }
   }
 
+
   return (
     <div className="container max-w-5xl mx-auto px-4 py-8 max-w-4xl">
       {/* Back Button (Top) */}
