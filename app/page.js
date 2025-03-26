@@ -259,43 +259,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
-      {/* Testimonials Section (Carousel) */}
-      <section className="py-16 md:py-24 max-w-6xl mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-          What Our Users Say
-        </h2>
-        <Carousel className="w-full max-w-2xl mx-auto">
-          <CarouselContent>
-            {testimonials.map((testimonial, index) => (
-              <CarouselItem key={index}>
-                <Card className="shadow-lg">
-                  <CardHeader>
-                    <div className="flex items-center gap-4">
-                      <img
-                        src={testimonial.avatar}
-                        alt={testimonial.name}
-                        className="h-12 w-12 rounded-full object-cover"
-                      />
-                      <CardTitle className="text-lg">
-                        {testimonial.name}
-                      </CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="flex items-start gap-2">
-                      <Star className="h-5 w-5" />
-                      {testimonial.text}
-                    </p>
-                  </CardContent>
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
-      </section>
     </div>
   );
 }
