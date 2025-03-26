@@ -45,7 +45,7 @@ export async function GET(request) {
     // Extract pagination parameters from the request URL
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1", 10);
-    const limit = 10; // Fixed limit of 10 blogs per page
+    const limit = 5; // Fixed limit of 10 blogs per page
     const skip = (page - 1) * limit;
 
     // Determine the query based on user role

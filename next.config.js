@@ -5,7 +5,7 @@ const nextConfig = {
   },
   reactStrictMode: true, // Catches potential issues
   images: {
-    domains: ['images.unsplash.com','plus.unsplash.com'], // Correct hostname for Unsplash images
+    domains: ['images.unsplash.com','plus.unsplash.com','lh3.googleusercontent.com'], // Correct hostname for Unsplash images
   },
 };
 

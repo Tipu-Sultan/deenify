@@ -29,7 +29,7 @@ const categories = [
   "Ramadan and Islamic Festivals",
   "Islamic History and Biographies",
   "Islamic Lifestyle and Morality",
-  "Islamic Spirituality and Self-Improvement",
+  "Islamic Spirituality and Self Improvement",
   "Islamic Finance and Business Ethics",
   "Dawah and Islamic Outreach",
   "Women in Islam",
