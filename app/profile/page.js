@@ -1,4 +1,3 @@
-
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -7,12 +6,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, User, Clock, Activity } from "lucide-react";
 import DeenifyUser from "@/models/DeenifyUser";
 import { authOptions } from "@/lib/authOptions";
+import connectToDatabase from "@/lib/db";
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
   if (!session) {
     redirect("/login");
   }
+
+  await connectToDatabase();
 
   const user = await DeenifyUser.findById( session?.user?.id )
 
